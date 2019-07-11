@@ -23,6 +23,12 @@ module Kong
         self.new(attributes).create
       end
 
+      # Create resource
+      # @param [Hash] attributes
+      def createWithout(attributes = {})
+        self.new(attributes).create
+      end
+
       # Find resource
       # @param [String] id
       def find(id)
@@ -112,6 +118,8 @@ module Kong
     # Create resource
     def create
       headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
+      puts @api_end_point
+      puts attributes
       response = client.post(@api_end_point, nil, attributes, headers)
       init_attributes(response)
       self
