@@ -23,7 +23,7 @@ module Kong
     end
 
     def self.api_url
-      @api_url || ENV['KONG_URI'] || 'http://localhost:8001'
+      @api_url || ENV['KONG_URI'] || 'http://localhost:8081'
     end
 
     def self.api_url=(url)
@@ -81,6 +81,7 @@ module Kong
           body: encode_body(obj, request_headers['Content-Type']),
           query: encode_params(params)
       }
+      pp request_options
       response = http_client.post(request_options)
       if [200, 201].include?(response.status)
         parse_response(response)

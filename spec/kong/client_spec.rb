@@ -13,7 +13,7 @@ describe Kong::Client do
   describe '#initialize' do
     it 'initializes Excon with Kong URI' do
       described_class.api_url = nil
-      expect(Excon).to receive(:new).with('http://localhost:8001', { omit_default_port: true })
+      expect(Excon).to receive(:new).with('http://localhost:8081', { omit_default_port: true })
       described_class.send(:new)
     end
 
@@ -40,7 +40,7 @@ describe Kong::Client do
 
     it 'returns localhost as default' do
       described_class.api_url = nil
-      expect(subject.api_url).to eq('http://localhost:8001')
+      expect(subject.api_url).to eq('http://localhost:8081')
     end
 
     it 'returns value from environment variable' do

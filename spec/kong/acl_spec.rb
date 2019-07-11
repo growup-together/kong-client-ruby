@@ -16,4 +16,10 @@ describe Kong::Acl do
       expect(subject.class::API_END_POINT).to eq('/acls/')
     end
   end
+
+  # describe '::CREATE' do
+  #   it 'contains valid end point' do
+  #     Kong::Acl.create(consumer_id: "29617353-7a7a-4f34-8364-2f2c2d7f6cdf", group: "guardian")
+  #   end
+  # end
 end

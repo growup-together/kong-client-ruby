@@ -23,11 +23,6 @@ module Kong
         self.new(attributes).create
       end
 
-      # Create resource
-      # @param [Hash] attributes
-      def createWithout(attributes = {})
-        self.new(attributes).create
-      end
 
       # Find resource
       # @param [String] id
@@ -39,7 +34,7 @@ module Kong
         if method.to_s.start_with?('find_by_')
           attribute = method.to_s.sub('find_by_', '')
           if self.attribute_names.include?(attribute)
-            self.list({ attribute => arguments[0] })[0]
+            self.list({ attribute=>arguments[0] })[0]
           else
             super
           end
@@ -117,10 +112,9 @@ module Kong
 
     # Create resource
     def create
-      headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
-      puts @api_end_point
-      puts attributes
-      response = client.post(@api_end_point, nil, attributes, headers)
+      headers = { 'Content-Type'=>'application/x-www-form-urlencoded' }
+      new_attributes = rebuild_attributes(@api_end_point, attributes)
+      response = client.post(@api_end_point, new_attributes, new_attributes, headers)
       init_attributes(response)
       self
     end
@@ -128,7 +122,7 @@ module Kong
     # Create or update resource
     # Data is sent to Kong in JSON format and HTTP PUT request is used
     def create_or_update
-      headers = { 'Content-Type' => 'application/json' }
+      headers = { 'Content-Type'=>'application/json' }
       response = client.put("#{@api_end_point}", attributes, nil, headers)
       init_attributes(response)
       self
@@ -136,7 +130,7 @@ module Kong
 
     # Update resource
     def update
-      headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
+      headers = { 'Content-Type'=>'application/x-www-form-urlencoded' }
       response = client.patch("#{@api_end_point}#{self.id}", nil, attributes, headers)
       init_attributes(response)
       self
@@ -170,6 +164,18 @@ module Kong
       use_consumer_end_point if respond_to?(:use_consumer_end_point)
       use_api_end_point if respond_to?(:use_api_end_point)
       use_upstream_end_point if respond_to?(:use_upstream_end_point)
+    end
+
+    # 兼容新版kong
+    def rebuild_attributes(api_end_point, attributes)
+      @attributes = {}
+      attributes.each do |key, value|
+        @attributes[key.to_s] = value
+      end
+      if api_end_point.include? "consumers" || "acls"
+        attributes.delete("consumer_id")
+      end
+      attributes
     end
   end
 end
